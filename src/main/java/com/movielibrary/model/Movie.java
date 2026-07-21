@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -17,11 +20,14 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required")
     @Column(nullable = false)
     private String title;
 
     private String director;
 
+    @Min(value = 1888, message = "Release year must be 1888 or later") //Roundhay Garden Scene
+    @Max(value = 2100, message = "Release year must be 2100 or earlier")
     @Column(name = "release_year")
     private Integer releaseYear;
 
