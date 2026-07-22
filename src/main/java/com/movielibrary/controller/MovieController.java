@@ -1,6 +1,7 @@
 package com.movielibrary.controller;
 
-import com.movielibrary.model.Movie;
+import com.movielibrary.dto.MovieRequestDTO;
+import com.movielibrary.dto.MovieResponseDTO;
 import com.movielibrary.service.MovieService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,24 +28,24 @@ public class MovieController {
     }
 
     @GetMapping
-    public List<Movie> getAllMovies() {
+    public List<MovieResponseDTO> getAllMovies() {
         return movieService.getAllMovies();
     }
 
     @GetMapping("/{id}")
-    public Movie getMovieById(@PathVariable Long id) {
+    public MovieResponseDTO getMovieById(@PathVariable Long id) {
         return movieService.getMovieById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Movie> createMovie(@Valid @RequestBody Movie movie) {
-        Movie created = movieService.createMovie(movie);
+    public ResponseEntity<MovieResponseDTO> createMovie(@Valid @RequestBody MovieRequestDTO request) {
+        MovieResponseDTO created = movieService.createMovie(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public Movie updateMovie(@PathVariable Long id, @Valid @RequestBody Movie movie) {
-        return movieService.updateMovie(id, movie);
+    public MovieResponseDTO updateMovie(@PathVariable Long id, @Valid @RequestBody MovieRequestDTO request) {
+        return movieService.updateMovie(id, request);
     }
 
     @DeleteMapping("/{id}")

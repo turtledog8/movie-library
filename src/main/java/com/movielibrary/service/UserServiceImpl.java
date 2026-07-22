@@ -1,5 +1,7 @@
 package com.movielibrary.service;
 
+import com.movielibrary.dto.UserRequestDTO;
+import com.movielibrary.dto.UserResponseDTO;
 import com.movielibrary.model.Role;
 import com.movielibrary.model.User;
 import com.movielibrary.repository.RoleRepository;
@@ -25,46 +27,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserResponseDTO::fromEntity)
+                .toList();
     }
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id));
+    public UserResponseDTO getUserById(Long id) {
+        return UserResponseDTO.fromEntity(findUserEntity(id));
     }
 
     @Override
-    public User createUser(User user) {
-        user.setId(null);
-        user.setRoles(resolveRoles(user.getRoles()));
-        return userRepository.save(user);
+    public UserResponseDTO createUser(UserRequestDTO request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        user.setEnabled(request.isEnabled());
+        user.setRoles(resolveRoles(request.getRoleIds()));
+        return UserResponseDTO.fromEntity(userRepository.save(user));
     }
 
     @Override
-    public User updateUser(Long id, User update) {
-        User existing = getUserById(id);
-        existing.setUsername(update.getUsername());
-        existing.setPassword(update.getPassword());
-        existing.setEnabled(update.isEnabled());
-        existing.setRoles(resolveRoles(update.getRoles()));
-        return userRepository.save(existing);
+    public UserResponseDTO updateUser(Long id, UserRequestDTO request) {
+        User existing = findUserEntity(id);
+        existing.setUsername(request.getUsername());
+        existing.setPassword(request.getPassword());
+        existing.setEnabled(request.isEnabled());
+        existing.setRoles(resolveRoles(request.getRoleIds()));
+        return UserResponseDTO.fromEntity(userRepository.save(existing));
     }
 
     @Override
     public void deleteUser(Long id) {
-        User existing = getUserById(id);
+        User existing = findUserEntity(id);
         userRepository.delete(existing);
     }
 
-    private Set<Role> resolveRoles(Set<Role> roles) {
-        if (roles == null || roles.isEmpty()) {
+    private User findUserEntity(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id));
+    }
+
+    private Set<Role> resolveRoles(Set<Long> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
             return new HashSet<>();
         }
-        return roles.stream()
-                .map(role -> roleRepository.findById(role.getId())
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found: " + role.getId())))
+        return roleIds.stream()
+                .map(roleId -> roleRepository.findById(roleId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found: " + roleId)))
                 .collect(Collectors.toSet());
     }
 }

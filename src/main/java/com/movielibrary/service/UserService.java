@@ -1,18 +1,19 @@
 package com.movielibrary.service;
 
-import com.movielibrary.model.User;
+import com.movielibrary.dto.UserRequestDTO;
+import com.movielibrary.dto.UserResponseDTO;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<User> getAllUsers();
+    List<UserResponseDTO> getAllUsers();
 
-    User getUserById(Long id);
+    UserResponseDTO getUserById(Long id);
 
-    User createUser(User user);
+    UserResponseDTO createUser(UserRequestDTO request);
 
-    User updateUser(Long id, User user);
+    UserResponseDTO updateUser(Long id, UserRequestDTO request);
 
     void deleteUser(Long id);
 }

@@ -1,6 +1,7 @@
 package com.movielibrary.controller;
 
-import com.movielibrary.model.User;
+import com.movielibrary.dto.UserRequestDTO;
+import com.movielibrary.dto.UserResponseDTO;
 import com.movielibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,24 +28,24 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserResponseDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public UserResponseDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User created = userService.createUser(user);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO request) {
+        UserResponseDTO created = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
-        return userService.updateUser(id, user);
+    public UserResponseDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO request) {
+        return userService.updateUser(id, request);
     }
 
     @DeleteMapping("/{id}")

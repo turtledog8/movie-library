@@ -1,5 +1,7 @@
 package com.movielibrary.service;
 
+import com.movielibrary.dto.MovieRequestDTO;
+import com.movielibrary.dto.MovieResponseDTO;
 import com.movielibrary.model.Movie;
 import com.movielibrary.repository.MovieRepository;
 import org.springframework.http.HttpStatus;
@@ -18,35 +20,43 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> getAllMovies() {
-        return movieRepository.findAll();
+    public List<MovieResponseDTO> getAllMovies() {
+        return movieRepository.findAll().stream()
+                .map(MovieResponseDTO::fromEntity)
+                .toList();
     }
 
     @Override
-    public Movie getMovieById(Long id) {
-        return movieRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found: " + id));
+    public MovieResponseDTO getMovieById(Long id) {
+        return MovieResponseDTO.fromEntity(findMovieEntity(id));
     }
 
     @Override
-    public Movie createMovie(Movie movie) {
-        movie.setId(null);
-        return movieRepository.save(movie);
+    public MovieResponseDTO createMovie(MovieRequestDTO request) {
+        Movie movie = new Movie();
+        movie.setTitle(request.getTitle());
+        movie.setDirector(request.getDirector());
+        movie.setReleaseYear(request.getReleaseYear());
+        return MovieResponseDTO.fromEntity(movieRepository.save(movie));
     }
 
     @Override
-    public Movie updateMovie(Long id, Movie movie) {
-        Movie existing = getMovieById(id);
-        existing.setTitle(movie.getTitle());
-        existing.setDirector(movie.getDirector());
-        existing.setReleaseYear(movie.getReleaseYear());
-        existing.setRating(movie.getRating());
-        return movieRepository.save(existing);
+    public MovieResponseDTO updateMovie(Long id, MovieRequestDTO request) {
+        Movie existing = findMovieEntity(id);
+        existing.setTitle(request.getTitle());
+        existing.setDirector(request.getDirector());
+        existing.setReleaseYear(request.getReleaseYear());
+        return MovieResponseDTO.fromEntity(movieRepository.save(existing));
     }
 
     @Override
     public void deleteMovie(Long id) {
-        Movie existing = getMovieById(id);
+        Movie existing = findMovieEntity(id);
         movieRepository.delete(existing);
+    }
+
+    private Movie findMovieEntity(Long id) {
+        return movieRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found: " + id));
     }
 }
