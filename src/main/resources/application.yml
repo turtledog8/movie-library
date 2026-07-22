@@ -28,3 +28,12 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+jwt:
+  secret: ${JWT_SECRET:change-this-dev-only-secret-change-this-dev-only-secret}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+
+app:
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin123}

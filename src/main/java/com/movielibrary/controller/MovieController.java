@@ -3,6 +3,7 @@ package com.movielibrary.controller;
 import com.movielibrary.dto.MovieRequestDTO;
 import com.movielibrary.dto.MovieResponseDTO;
 import com.movielibrary.service.MovieService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/movies")
+@SecurityRequirement(name = "bearerAuth")
 public class MovieController {
 
     private final MovieService movieService;
