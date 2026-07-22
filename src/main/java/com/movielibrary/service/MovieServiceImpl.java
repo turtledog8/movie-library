@@ -14,9 +14,11 @@ import java.util.List;
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;
+    private final RatingEnrichmentService ratingEnrichmentService;
 
-    public MovieServiceImpl(MovieRepository movieRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, RatingEnrichmentService ratingEnrichmentService) {
         this.movieRepository = movieRepository;
+        this.ratingEnrichmentService = ratingEnrichmentService;
     }
 
     @Override
@@ -37,7 +39,9 @@ public class MovieServiceImpl implements MovieService {
         movie.setTitle(request.getTitle());
         movie.setDirector(request.getDirector());
         movie.setReleaseYear(request.getReleaseYear());
-        return MovieResponseDTO.fromEntity(movieRepository.save(movie));
+        Movie saved = movieRepository.save(movie);
+        ratingEnrichmentService.enrichRatingAsync(saved.getId(), saved.getTitle());
+        return MovieResponseDTO.fromEntity(saved);
     }
 
     @Override
@@ -53,6 +57,11 @@ public class MovieServiceImpl implements MovieService {
     public void deleteMovie(Long id) {
         Movie existing = findMovieEntity(id);
         movieRepository.delete(existing);
+    }
+
+    @Override
+    public MovieResponseDTO refreshRating(Long id) {
+        return ratingEnrichmentService.refreshRating(id);
     }
 
     private Movie findMovieEntity(Long id) {

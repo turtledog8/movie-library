@@ -55,4 +55,9 @@ public class MovieController {
         movieService.deleteMovie(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/refresh-rating")
+    public MovieResponseDTO refreshRating(@PathVariable Long id) {
+        return movieService.refreshRating(id);
+    }
 }

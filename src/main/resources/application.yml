@@ -37,3 +37,7 @@ app:
   admin:
     username: ${ADMIN_USERNAME:admin}
     password: ${ADMIN_PASSWORD:admin123}
+
+omdb:
+  base-url: ${OMDB_BASE_URL:https://www.omdbapi.com}
+  api-key: ${OMDB_API_KEY:}  //add your own api key theyre free
