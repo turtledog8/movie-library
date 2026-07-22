@@ -1,20 +1,27 @@
 package com.movielibrary.service;
 
+import com.movielibrary.model.Role;
 import com.movielibrary.model.User;
+import com.movielibrary.repository.RoleRepository;
 import com.movielibrary.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -31,6 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
         user.setId(null);
+        user.setRoles(resolveRoles(user.getRoles()));
         return userRepository.save(user);
     }
 
@@ -40,7 +48,7 @@ public class UserServiceImpl implements UserService {
         existing.setUsername(update.getUsername());
         existing.setPassword(update.getPassword());
         existing.setEnabled(update.isEnabled());
-        existing.setRoles(update.getRoles());
+        existing.setRoles(resolveRoles(update.getRoles()));
         return userRepository.save(existing);
     }
 
@@ -48,5 +56,15 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         User existing = getUserById(id);
         userRepository.delete(existing);
+    }
+
+    private Set<Role> resolveRoles(Set<Role> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return new HashSet<>();
+        }
+        return roles.stream()
+                .map(role -> roleRepository.findById(role.getId())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found: " + role.getId())))
+                .collect(Collectors.toSet());
     }
 }
