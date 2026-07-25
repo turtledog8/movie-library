@@ -2,11 +2,10 @@ package com.movielibrary.service;
 
 import com.movielibrary.dto.MovieRequestDTO;
 import com.movielibrary.dto.MovieResponseDTO;
+import com.movielibrary.exception.MovieNotFoundException;
 import com.movielibrary.model.Movie;
 import com.movielibrary.repository.MovieRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -66,6 +65,6 @@ public class MovieServiceImpl implements MovieService {
 
     private Movie findMovieEntity(Long id) {
         return movieRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found: " + id));
+                .orElseThrow(() -> new MovieNotFoundException(id));
     }
 }

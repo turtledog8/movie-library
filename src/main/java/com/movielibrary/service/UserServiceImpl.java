@@ -2,14 +2,14 @@ package com.movielibrary.service;
 
 import com.movielibrary.dto.UserRequestDTO;
 import com.movielibrary.dto.UserResponseDTO;
+import com.movielibrary.exception.RoleNotFoundException;
+import com.movielibrary.exception.UserNotFoundException;
 import com.movielibrary.model.Role;
 import com.movielibrary.model.User;
 import com.movielibrary.repository.RoleRepository;
 import com.movielibrary.repository.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     private User findUserEntity(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     private Set<Role> resolveRoles(Set<Long> roleIds) {
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
         }
         return roleIds.stream()
                 .map(roleId -> roleRepository.findById(roleId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found: " + roleId)))
+                        .orElseThrow(() -> new RoleNotFoundException(roleId)))
                 .collect(Collectors.toSet());
     }
 }

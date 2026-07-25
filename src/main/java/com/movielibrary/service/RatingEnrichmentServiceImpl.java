@@ -1,13 +1,12 @@
 package com.movielibrary.service;
 
 import com.movielibrary.dto.MovieResponseDTO;
+import com.movielibrary.exception.MovieNotFoundException;
 import com.movielibrary.external.OmdbClient;
 import com.movielibrary.model.Movie;
 import com.movielibrary.repository.MovieRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class RatingEnrichmentServiceImpl implements RatingEnrichmentService {
@@ -34,7 +33,7 @@ public class RatingEnrichmentServiceImpl implements RatingEnrichmentService {
     @Override
     public MovieResponseDTO refreshRating(Long movieId) {
         Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found: " + movieId));
+                .orElseThrow(() -> new MovieNotFoundException(movieId));
 
         omdbClient.fetchRating(movie.getTitle()).ifPresent(movie::setRating);
 
