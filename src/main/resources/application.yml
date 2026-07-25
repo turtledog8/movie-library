@@ -40,4 +40,4 @@ app:
 
 omdb:
   base-url: ${OMDB_BASE_URL:https://www.omdbapi.com}
-  api-key: ${OMDB_API_KEY:}  //add your own api key theyre free
+  api-key: ${OMDB_API_KEY:} //add your own api key theyre free
