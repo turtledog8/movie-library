@@ -7,8 +7,8 @@ spring:
 
   datasource:
     url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:movie_library}
-    username: ${DB_USERNAME:root} // reminder that these are windows env variables
-    password: ${DB_PASSWORD:root} // because i forgot to add them :p
+    username: ${DB_USERNAME:root} # reminder that these are windows env variables
+    password: ${DB_PASSWORD:root} # because i forgot to add them :p
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
@@ -33,11 +33,6 @@ jwt:
   secret: ${JWT_SECRET:change-this-dev-only-secret-change-this-dev-only-secret}
   expiration-ms: ${JWT_EXPIRATION_MS:3600000}
 
-app:
-  admin:
-    username: ${ADMIN_USERNAME:admin}
-    password: ${ADMIN_PASSWORD:admin123}
-
 omdb:
   base-url: ${OMDB_BASE_URL:https://www.omdbapi.com}
-  api-key: ${OMDB_API_KEY:} //add your own api key theyre free
+  api-key: ${OMDB_API_KEY:} # add your own api key theyre free

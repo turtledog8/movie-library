@@ -20,11 +20,6 @@ jwt:
   secret: test-only-secret-key-not-used-anywhere-else-32bytes
   expiration-ms: 3600000
 
-app:
-  admin:
-    username: admin
-    password: admin123
-
 omdb:
   base-url: http://localhost
-  api-key: //use your own api key here cuh
+  api-key:  # use your own api key here cuh
