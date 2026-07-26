@@ -83,6 +83,16 @@ class MovieControllerTest {
 
     @Test
     @WithMockUser(roles = "USER")
+    void getMovieById_found_returns200() throws Exception {
+        when(movieService.getMovieById(1L)).thenReturn(sampleMovie());
+
+        mockMvc.perform(get("/api/movies/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("The Matrix"));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
     void getMovieById_notFound_returns404() throws Exception {
         when(movieService.getMovieById(99L)).thenThrow(new MovieNotFoundException(99L));
 
@@ -136,6 +146,32 @@ class MovieControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
+    void createMovie_releaseYearBeforeCinemaExisted_returns400() throws Exception {
+        MovieRequestDTO request = new MovieRequestDTO();
+        request.setTitle("Too Old");
+        request.setReleaseYear(1887);
+
+        mockMvc.perform(post("/api/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void createMovie_releaseYearTooFarInFuture_returns400() throws Exception {
+        MovieRequestDTO request = new MovieRequestDTO();
+        request.setTitle("Too Futuristic");
+        request.setReleaseYear(2101);
+
+        mockMvc.perform(post("/api/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
     void updateMovie_asAdmin_returns200() throws Exception {
         MovieRequestDTO request = new MovieRequestDTO();
         request.setTitle("The Matrix Reloaded");
@@ -174,5 +210,16 @@ class MovieControllerTest {
     void refreshRating_asUser_returns403() throws Exception {
         mockMvc.perform(post("/api/movies/1/refresh-rating"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void refreshRating_asAdmin_returns200() throws Exception {
+        when(movieService.refreshRating(1L))
+                .thenReturn(new MovieResponseDTO(1L, "The Matrix", "Wachowski", 1999, 8.7, null, null));
+
+        mockMvc.perform(post("/api/movies/1/refresh-rating"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rating").value(8.7));
     }
 }
