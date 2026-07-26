@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 
+/**
+ * Seeds the database with the base roles and a default admin user on application startup
+ */
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -20,6 +23,15 @@ public class DataInitializer implements CommandLineRunner {
     private final String adminUsername;
     private final String adminPassword;
 
+    /**
+     * Creates the initializer.
+     *
+     * @param roleRepository  repository used to look up and persist roles
+     * @param userRepository  repository used to look up and persist users
+     * @param passwordEncoder encoder used to hash the default admin password
+     * @param adminUsername   username for the default admin account, from {@code app.admin.username}
+     * @param adminPassword   raw password for the default admin account, from {@code app.admin.password}
+     */
     public DataInitializer(RoleRepository roleRepository,
                             UserRepository userRepository,
                             PasswordEncoder passwordEncoder,
@@ -32,6 +44,12 @@ public class DataInitializer implements CommandLineRunner {
         this.adminPassword = adminPassword;
     }
 
+    /**
+     * Ensures the {@code ADMIN} and {@code USER} roles exist and creates the default
+     * admin user if it is not already present.
+     *
+     * @param args command-line arguments (unused)
+     */
     @Override
     public void run(String... args) {
         Role adminRole = findOrCreateRole("ADMIN");
@@ -47,6 +65,12 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
+    /**
+     * Looks up a role by name, creating and persisting it if it does not exist.
+     *
+     * @param name role name to find or create
+     * @return the existing or newly created role
+     */
     private Role findOrCreateRole(String name) {
         return roleRepository.findByName(name)
                 .orElseGet(() -> {

@@ -16,6 +16,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Servlet filter that reads a bearer JWT from the {@code Authorization} header,
+ * validates it, and populates the {@link SecurityContextHolder} with the
+ * corresponding authenticated user for the remainder of the request
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -27,6 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Extracts and validates the JWT from the request, and sets the
+     * authentication on the security context before continuing the filter chain.
+     * Requests without a bearer token, or with an invalid/expired one, pass through
+     * unauthenticated
+     *
+     * @param request     the incoming request
+     * @param response    the outgoing response
+     * @param filterChain the remaining filter chain
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                      @NonNull HttpServletResponse response,

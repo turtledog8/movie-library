@@ -12,6 +12,9 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
+/**
+ * A movie entry in the library including its  external rating
+ */
 @Entity
 @Table(name = "movies")
 public class Movie {

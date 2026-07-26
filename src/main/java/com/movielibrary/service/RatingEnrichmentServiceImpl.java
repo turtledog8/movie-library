@@ -8,6 +8,9 @@ import com.movielibrary.repository.MovieRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@link RatingEnrichmentService} implementation backed by {@link OmdbClient}
+ */
 @Service
 public class RatingEnrichmentServiceImpl implements RatingEnrichmentService {
 
@@ -19,6 +22,10 @@ public class RatingEnrichmentServiceImpl implements RatingEnrichmentService {
         this.omdbClient = omdbClient;
     }
 
+    /**
+     * Runs on Spring's async executor; the movie is only updated if both the movie
+     * still exists and OMDb returned a rating
+     */
     @Override
     @Async
     public void enrichRatingAsync(Long movieId, String title) {

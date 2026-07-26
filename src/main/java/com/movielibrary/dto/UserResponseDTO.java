@@ -6,6 +6,9 @@ import com.movielibrary.model.User;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * User representation returned by the API with role names in place of role entities
+ */
 public class UserResponseDTO {
 
     private final Long id;
@@ -20,6 +23,12 @@ public class UserResponseDTO {
         this.roles = roles;
     }
 
+    /**
+     * Builds a response DTO from a {@link User} entity, flattening roles to their names
+     *
+     * @param user the entity to convert
+     * @return the corresponding response DTO
+     */
     public static UserResponseDTO fromEntity(User user) {
         Set<String> roleNames = user.getRoles().stream()
                 .map(Role::getName)

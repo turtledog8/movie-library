@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * An authorization role ( {@code ADMIN}, {@code USER}) that can be assigned to users
+ */
 @Entity
 @Table(name = "roles")
 public class Role {

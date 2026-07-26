@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Exposes the authentication endpoint used to obtain a JWT for subsequent requests
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -26,6 +29,13 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Authenticates a user with username/password and issues a JWT on success
+     *
+     * @param request credentials to authenticate
+     * @return a response containing the generated JWT
+     * @throws InvalidCredentialsException if authentication fails
+     */
     @PostMapping("/login")
     public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO request) {
         try {

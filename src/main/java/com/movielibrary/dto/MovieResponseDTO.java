@@ -4,6 +4,9 @@ import com.movielibrary.model.Movie;
 
 import java.time.LocalDateTime;
 
+/**
+ * Movie representation returned by the API, including its external rating and timestamps
+ */
 public class MovieResponseDTO {
 
     private final Long id;
@@ -25,6 +28,12 @@ public class MovieResponseDTO {
         this.updatedAt = updatedAt;
     }
 
+    /**
+     * Builds a response DTO from a {@link Movie} entity
+     *
+     * @param movie the entity to convert
+     * @return the corresponding response DTO
+     */
     public static MovieResponseDTO fromEntity(Movie movie) {
         return new MovieResponseDTO(
                 movie.getId(),

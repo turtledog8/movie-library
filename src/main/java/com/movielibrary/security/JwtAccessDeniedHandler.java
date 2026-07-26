@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Instant;
 
+/**
+ * Writes a JSON {@link ErrorResponse} with a {@code 403} status when an authenticated
+ * user lacks the authority required for a request
+ */
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
@@ -23,6 +27,11 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * @param request               the request that was denied
+     * @param response              the response to write the error body to
+     * @param accessDeniedException the exception that triggered this handler
+     */
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                         AccessDeniedException accessDeniedException) throws IOException, ServletException {

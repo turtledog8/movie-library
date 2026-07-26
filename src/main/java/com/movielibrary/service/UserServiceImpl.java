@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * {@link UserService} implementation backed by {@link UserRepository} and {@link RoleRepository}
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -67,11 +70,23 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(existing);
     }
 
+    /**
+     * @param id id of the user to find
+     * @return the user entity
+     * @throws UserNotFoundException if no user has that id
+     */
     private User findUserEntity(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    /**
+     * Resolves a set of role ids to their corresponding {@link Role} entities
+     *
+     * @param roleIds ids of the roles to resolve; may be {@code null} or empty
+     * @return the matching roles, or an empty set if {@code roleIds} was null/empty
+     * @throws RoleNotFoundException if any id does not correspond to an existing role
+     */
     private Set<Role> resolveRoles(Set<Long> roleIds) {
         if (roleIds == null || roleIds.isEmpty()) {
             return new HashSet<>();

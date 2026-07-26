@@ -14,6 +14,9 @@ import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * An application user with credentials and an assigned set of {@link Role}s
+ */
 @Entity
 @Table(name = "users")
 public class User {

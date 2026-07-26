@@ -2,6 +2,9 @@ package com.movielibrary.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Credentials submitted to the login endpoint
+ */
 public class LoginRequestDTO {
 
     @NotBlank(message = "Username is required")

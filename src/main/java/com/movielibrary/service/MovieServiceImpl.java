@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * {@link MovieService} implementation backed by {@link MovieRepository}, delegating
+ * external rating lookups to {@link RatingEnrichmentService}
+ */
 @Service
 public class MovieServiceImpl implements MovieService {
 
@@ -63,6 +67,11 @@ public class MovieServiceImpl implements MovieService {
         return ratingEnrichmentService.refreshRating(id);
     }
 
+    /**
+     * @param id id of the movie to find
+     * @return the movie entity
+     * @throws MovieNotFoundException if no movie has that id
+     */
     private Movie findMovieEntity(Long id) {
         return movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(id));

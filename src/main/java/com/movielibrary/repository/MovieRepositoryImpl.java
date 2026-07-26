@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * {@link MovieRepository} implementation backed by JPA's {@link EntityManager}
+ */
 @Repository
 public class MovieRepositoryImpl implements MovieRepository {
 

@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Loads Spring Security {@link UserDetails} from the application's {@link User} entities.
+ * Role names are prefixed with {@code ROLE_} (e.g. "ADMIN" -> "ROLE_ADMIN") because thats
+ * the format Spring Security's {@code hasRole(...)} checks expect
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -22,6 +27,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * @param username username to look up
+     * @return the corresponding Spring Security user
+     * @throws UsernameNotFoundException if no user with the given username exists
+     */
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username)

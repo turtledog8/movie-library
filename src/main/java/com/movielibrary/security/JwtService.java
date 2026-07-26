@@ -14,18 +14,31 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Issues and validates JWTs used to authenticate API requests
+ */
 @Service
 public class JwtService {
 
     private final SecretKey signingKey;
     private final long expirationMs;
 
+    /**
+     * @param secret       HMAC signing secret, from {@code jwt.secret}
+     * @param expirationMs token lifetime in milliseconds, from {@code jwt.expiration-ms}
+     */
     public JwtService(@Value("${jwt.secret}") String secret,
                        @Value("${jwt.expiration-ms}") long expirationMs) {
         this.signingKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMs = expirationMs;
     }
 
+    /**
+     * Generates a signed JWT for the given user, embedding their authorities as a claim
+     *
+     * @param userDetails the user to generate a token for
+     * @return the compact, signed JWT
+     */
     public String generateToken(UserDetails userDetails) {
         List<String> authorities = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -41,10 +54,23 @@ public class JwtService {
                 .compact();
     }
 
+    /**
+     * @param token the JWT to read
+     * @return the username stored in the token's subject claim
+     * @throws JwtException if the token is malformed, expired, or its signature is invalid
+     */
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
     }
 
+    /**
+     * Checks whether a token is well-formed, correctly signed, unexpired, and issued
+     * for the given user
+     *
+     * @param token       the JWT to validate
+     * @param userDetails the user the token is expected to belong to
+     * @return {@code true} if the token is valid for that user
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             Claims claims = parseClaims(token);
@@ -58,6 +84,13 @@ public class JwtService {
         return claims.getExpiration().before(new Date());
     }
 
+    /**
+     * Parses and verifies the token's signature, returning its claims.
+     *
+     * @param token the JWT to parse
+     * @return the token's claims
+     * @throws JwtException if the token is malformed, expired, or its signature is invalid
+     */
     private Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signingKey)

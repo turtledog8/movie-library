@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Payload for creating or updating a user, including the ids of roles to assign
+ */
 public class UserRequestDTO {
 
     @NotBlank(message = "Username is required")

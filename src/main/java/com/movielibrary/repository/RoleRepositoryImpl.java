@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * {@link RoleRepository} implementation backed by JPA's {@link EntityManager}
+ */
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
 

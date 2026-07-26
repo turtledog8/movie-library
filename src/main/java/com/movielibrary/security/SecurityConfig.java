@@ -14,6 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configures Spring Security: stateless JWT-based authentication, password encoding,
+ * and role-based authorization rules for the API endpoints.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -33,16 +37,27 @@ public class SecurityConfig {
         this.accessDeniedHandler = accessDeniedHandler;
     }
 
+    /**
+     * @return the BCrypt password encoder used to hash and verify user passwords
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * @param config the Spring Security authentication configuration
+     * @return the framework-managed {@link AuthenticationManager}
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * @return an authentication provider that validates credentials against
+     *         {@link CustomUserDetailsService} using the configured password encoder
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -51,6 +66,14 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Defines the security filter chain: disables CSRF (the API is stateless and
+     * token-based), enforces stateless sessions, wires the JWT filter and error
+     * handlers, and sets per-endpoint authorization rules
+     *
+     * @param http the security configuration builder
+     * @return the built filter chain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

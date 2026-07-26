@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Payload for creating or updating a movie
+ */
 public class MovieRequestDTO {
 
     @NotBlank(message = "Title is required")

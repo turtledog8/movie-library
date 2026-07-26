@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Instant;
 
+/**
+ * Writes a JSON {@link ErrorResponse} with a {@code 401} status when an unauthenticated
+ * request is made to a secured endpoint
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -23,6 +27,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * @param request       the unauthenticated request
+     * @param response      the response to write the error body to
+     * @param authException the exception that triggered this entry point
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                           AuthenticationException authException) throws IOException, ServletException {
